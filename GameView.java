@@ -15,16 +15,20 @@ import android.widget.TextView;
 
 public class GameView extends View {
 	private Bitmap image;
-
-	private ArrayList<Position> positions = new ArrayList<Position>();
+	Stroke stroke = new Stroke(); // composition
+	
+	private ArrayList<Position> positions = stroke
+			.setStroke(new ArrayList<Position>());
+	
+	private int lineColor = stroke.setLineColor(Color.RED);
+	private int lineWidth = stroke.setLineWidth(10);
 	private Position imagePosition = new Position(-150, 100);
 	private int yChange = 0;
+
 	private boolean killed = false;
 	private boolean newUnicorn = true;
 
 	private int score = 0;
-	private static final int lineColor = Color.RED;
-	private static final int lineWidth = 10;
 	public long startTime;
 	public long endTime;
 
