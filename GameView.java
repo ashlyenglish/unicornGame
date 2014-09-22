@@ -14,17 +14,18 @@ import android.view.View;
 import android.widget.TextView;
 
 public class GameView extends View {
-	private Bitmap image;
-	
-	Stroke stroke = new Stroke(); // composition
-	
+
+	private Stroke stroke = new Stroke(); // composition
 	private ArrayList<Position> positions = stroke
 			.setStroke(new ArrayList<Position>());
-	
+
 	private int lineColor = stroke.setLineColor(Color.RED);
 	private int lineWidth = stroke.setLineWidth(10);
-	
-	private Position imagePosition = new Position(-150, 100);
+
+	private Image unicorn = new Image();
+	private Bitmap image = unicorn.getImage();
+	private Position imagePosition = unicorn.setImagePosition(new Position(
+			-150, 100));
 	private int yChange = 0;
 
 	private boolean killed = false;
@@ -68,9 +69,13 @@ public class GameView extends View {
 
 		// show the exploding image when the unicorn is killed
 		if (killed) {
+			// rather than creating a new Bitmap object in the
+			// "show the exploding image" part of the code, it uses the existing
+			// Image field and simply changes which Bitmap gets displayed.
 			Bitmap explode = BitmapFactory.decodeResource(getResources(),
 					R.drawable.explosion);
-			explode = Bitmap.createScaledBitmap(explode, 150, 150, false);
+			explode = unicorn.setImage(explode);
+			// explode = Bitmap.createScaledBitmap(explode, 150, 150, false);
 			canvas.drawBitmap(explode, imagePosition.getX(),
 					imagePosition.getY(), null);
 			newUnicorn = true;
@@ -86,7 +91,7 @@ public class GameView extends View {
 		canvas.drawBitmap(image, imagePosition.getX(), imagePosition.getY(),
 				null);
 		// draws the stroke, in Stroke class
-		stroke.drawLine(canvas, lineColor, lineWidth); 
+		stroke.drawLine(canvas, lineColor, lineWidth);
 
 	}
 
@@ -97,15 +102,7 @@ public class GameView extends View {
 
 		stroke.onTouchEvent(event); // in Stroke class
 		// see if the point is within the boundary of the image
-		int width = image.getWidth();
-		int height = image.getHeight();
-		float x = event.getX();
-		float y = event.getY();
-		// the !killed thing here is to prevent a "double-kill" that could occur
-		// while the "explosion" image is being shown
-		if (!killed && x > imagePosition.getX()
-				&& x < imagePosition.getX() + width && y > imagePosition.getY()
-				&& y < imagePosition.getY() + height) {
+		if (unicorn.isInBound(image, imagePosition, event) && killed == false) {
 			killed = true;
 			score++;
 			((TextView) (GameActivity.instance.getScoreboard())).setText(""
