@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.view.MotionEvent;
 
 public class Stroke {
 
@@ -38,7 +39,7 @@ public class Stroke {
 		return this.lineWidth;
 	}
 
-	public void drawLine(Canvas canvas) {
+	public void drawLine(Canvas canvas, int lineColor, int lineWidth) {
 		if (stroke.size() > 1) {
 			for (int i = 0; i < stroke.size() - 1; i++) {
 				int startX = stroke.get(i).getX();
@@ -52,6 +53,17 @@ public class Stroke {
 				canvas.drawLine(startX, startY, stopX, stopY, paint);
 			}
 		}
+	}
+
+	public boolean onTouchEvent(MotionEvent event) {
+		if (event.getAction() == MotionEvent.ACTION_DOWN) {
+			stroke.add(new Position((int) event.getX(), (int) event.getY()));
+		} else if (event.getAction() == MotionEvent.ACTION_MOVE) {
+			stroke.add(new Position((int) event.getX(), (int) event.getY()));
+		} else if (event.getAction() == MotionEvent.ACTION_UP) {
+			stroke.clear();
+		}
+		return false;
 	}
 
 }
