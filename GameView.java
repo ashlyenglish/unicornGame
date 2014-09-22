@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 public class GameView extends View {
 	private Bitmap image;
+	
 	Stroke stroke = new Stroke(); // composition
 	
 	private ArrayList<Position> positions = stroke
@@ -22,6 +23,7 @@ public class GameView extends View {
 	
 	private int lineColor = stroke.setLineColor(Color.RED);
 	private int lineWidth = stroke.setLineWidth(10);
+	
 	private Position imagePosition = new Position(-150, 100);
 	private int yChange = 0;
 
@@ -83,20 +85,8 @@ public class GameView extends View {
 		// draws the unicorn at the specified point
 		canvas.drawBitmap(image, imagePosition.getX(), imagePosition.getY(),
 				null);
-		// draws the stroke
-		if (positions.size() > 1) {
-			for (int i = 0; i < positions.size() - 1; i++) {
-				int startX = positions.get(i).getX();
-				int stopX = positions.get(i + 1).getX();
-				int startY = positions.get(i).getY();
-				int stopY = positions.get(i + 1).getY();
-
-				Paint paint = new Paint();
-				paint.setColor(lineColor);
-				paint.setStrokeWidth(lineWidth);
-				canvas.drawLine(startX, startY, stopX, stopY, paint);
-			}
-		}
+		// draws the stroke, in Stroke class
+		stroke.drawLine(canvas, lineColor, lineWidth); 
 
 	}
 
@@ -105,16 +95,7 @@ public class GameView extends View {
 	 */
 	public boolean onTouchEvent(MotionEvent event) {
 
-		if (event.getAction() == MotionEvent.ACTION_DOWN) {
-			positions.add(new Position((int) event.getX(), (int) event.getY()));
-		} else if (event.getAction() == MotionEvent.ACTION_MOVE) {
-			positions.add(new Position((int) event.getX(), (int) event.getY()));
-		} else if (event.getAction() == MotionEvent.ACTION_UP) {
-			positions.clear();
-		} else {
-			return false;
-		}
-
+		stroke.onTouchEvent(event); // in Stroke class
 		// see if the point is within the boundary of the image
 		int width = image.getWidth();
 		int height = image.getHeight();
