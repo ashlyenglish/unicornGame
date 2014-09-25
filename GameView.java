@@ -22,29 +22,34 @@ public class GameView extends View {
 	private int lineColor = stroke.setLineColor(Color.RED);
 	private int lineWidth = stroke.setLineWidth(10);
 
-	private Image unicorn = new Image();
-	private Bitmap image = unicorn.getImage();
-	private Position imagePosition = unicorn.setImagePosition(new Position(
-			-150, 100));
-	private int yChange = 0;
+	public Image unicorn = new Image();
+	public Bitmap image = unicorn.getImage();
+	public Position imagePosition = unicorn.setImagePosition(new Position(-150,
+			100));
+	public int yChange = 0;
+	public int score = 0;
+	public long startTime;
+	public long endTime;
 
 	private boolean killed = false;
 	private boolean newUnicorn = true;
 
-	private int score = 0;
-	public long startTime;
-	public long endTime;
-
 	public GameView(Context context) {
 		super(context);
-		setBackgroundResource(R.drawable.space);
-		image = BitmapFactory
-				.decodeResource(getResources(), R.drawable.unicorn);
-		image = Bitmap.createScaledBitmap(image, 150, 150, false);
+		prepareImage();
 	}
 
 	public GameView(Context context, AttributeSet attributeSet) {
 		super(context, attributeSet);
+		prepareImage();
+	}
+
+	/**
+	 * Sets the background to a given resource. Opens the given resource and
+	 * calls {@link #decodeResourceStream}. Creates a new bitmap, scaled from an
+	 * existing bitmap with the specified width and height.
+	 */
+	public void prepareImage() {
 		setBackgroundResource(R.drawable.space);
 		image = BitmapFactory
 				.decodeResource(getResources(), R.drawable.unicorn);
@@ -108,53 +113,9 @@ public class GameView extends View {
 			((TextView) (GameActivity.instance.getScoreboard())).setText(""
 					+ score);
 		}
-
 		// forces a redraw of the View
 		invalidate();
-
 		return true;
-	}
-
-	/*
-	 * This inner class is responsible for making the unicorn appear to move.
-	 * When "exec" is called on an object of this class, "doInBackground" gets
-	 * called in a background thread. It just waits 10ms and then updates the
-	 * image's position. Then "onPostExecute" is called.
-	 */
-	class BackgroundDrawingTask extends AsyncTask<Integer, Void, Integer> {
-
-		// this method gets run in the background
-		protected Integer doInBackground(Integer... args) {
-			try {
-				// note: you can change these values to make the unicorn go
-				// faster/slower
-				Thread.sleep(10);
-				imagePosition = new Position((imagePosition.getX() + 10),
-						(imagePosition.getY() + yChange));
-			} catch (Exception e) {
-			}
-			// the return value is passed to "onPostExecute" but isn't actually
-			// used here
-			return 1;
-		}
-
-		// this method gets run in the UI thread
-		protected void onPostExecute(Integer result) {
-			// redraw the View
-			invalidate();
-			if (score < 10) {
-				// need to start a new thread to make the unicorn keep moving
-				BackgroundDrawingTask task = new BackgroundDrawingTask();
-				task.execute();
-			} else {
-				// game over, man!
-				endTime = System.currentTimeMillis();
-				// these methods are deprecated but it's okay to use them...
-				// probably.
-				GameActivity.instance.removeDialog(1);
-				GameActivity.instance.showDialog(1);
-			}
-		}
 	}
 
 }
