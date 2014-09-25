@@ -25,6 +25,13 @@ public class Image {
 		return this.image;
 	}
 
+	/**
+	 * Checks if the stroke draw is in the bound of the unicorn image 
+	 * @param bImage
+	 * @param p
+	 * @param event
+	 * @return
+	 */
 	public boolean isInBound(Bitmap bImage, Position p, MotionEvent event) {
 		// see if the point is within the boundary of the image
 		int width = bImage.getWidth();
